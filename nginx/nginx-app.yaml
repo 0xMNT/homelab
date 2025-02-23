@@ -16,10 +16,10 @@ spec:
         valueFiles:
           - $values/nginx/values.yaml
   ignoreDifferences:
-  - group: apps
-    kind: Deployment
+  - group: ""
+    kind: Secret
     jsonPointers:
-    - /spec/replicas
+    - /data
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx
