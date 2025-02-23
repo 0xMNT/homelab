@@ -6,12 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/0xMNT/homelab
-    targetRevision: HEAD
-    path: gitea
-    helm:
-      valueFiles:
-        - values.yaml
+    repoURL: oci://registry-1.docker.io/bitnamicharts
+    chart: gitea
+    targetRevision: latest
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea
