@@ -2,16 +2,16 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: gitea
-  namespace: gitea
+  namespace: argocd
 spec:
   project: default
   source:
-    repoURL: oci://registry-1.docker.io/bitnamicharts
+    repoURL: registry-1.docker.io/bitnamicharts
     chart: gitea
-    targetRevision: latest
+    targetRevision: 3.1.11
   destination:
     server: https://kubernetes.default.svc
     namespace: gitea
   syncPolicy:
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
