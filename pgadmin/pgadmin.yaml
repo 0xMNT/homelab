@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pgadmin
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://helm.runix.net 
+      chart: pgadmin4
+      targetRevision: 1.35.0
+      helm:
+        valueFiles:
+          - $values/pgadmin/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pgadmin
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+
