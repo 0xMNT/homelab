@@ -10,7 +10,7 @@ spec:
       targetRevision: HEAD
       ref: values
     - repoURL: https://cloudnative-pg.github.io/charts
-      chart: cnpg
+      chart: cloudnative-pg
       targetRevision: 0.23.0
       helm:
         valueFiles:
@@ -21,4 +21,4 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-
+      - ServerSideApply=true
