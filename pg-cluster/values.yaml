@@ -130,7 +130,7 @@ recovery:
 
 cluster:
   # -- Number of instances
-  instances: 3
+  instances: 1
 
   # -- Name of the container image, supporting both tags (<image>:<tag>) and digests for deterministic and repeatable deployments:
   # <image>:<tag>@sha256:<digestValue>
@@ -403,29 +403,27 @@ imageCatalog:
     #   major: 16
 
 # -- List of PgBouncer poolers
-poolers: []
-  # -
-  #   # -- Pooler name
-  #   name: rw
-  #   # -- PgBouncer type of service to forward traffic to.
-  #   type: rw
-  #   # -- PgBouncer pooling mode
-  #   poolMode: transaction
-  #   # -- Number of PgBouncer instances
-  #   instances: 3
-  #   # -- PgBouncer configuration parameters
-  #   parameters:
-  #     max_client_conn: "1000"
-  #     default_pool_size: "25"
-  #   monitoring:
-  #     # -- Whether to enable monitoring
-  #     enabled: false
-  #     podMonitor:
-  #         # -- Whether to enable the PodMonitor
-  #       enabled: true
-  #   # -- Custom PgBouncer deployment template.
-  #   # Use to override image, specify resources, etc.
-  #   template: {}
+poolers:
+  - name: rw
+    # -- PgBouncer type of service to forward traffic to.
+    type: rw
+    # -- PgBouncer pooling mode
+    poolMode: transaction
+    # -- Number of PgBouncer instances
+    instances: 1
+    # -- PgBouncer configuration parameters
+    parameters:
+      max_client_conn: "1000"
+      default_pool_size: "25"
+    monitoring:
+      # -- Whether to enable monitoring
+      enabled: false
+      podMonitor:
+          # -- Whether to enable the PodMonitor
+        enabled: true
+    # -- Custom PgBouncer deployment template.
+    # Use to override image, specify resources, etc.
+    template: {}
   # -
   #   # -- Pooler name
   #   name: ro
