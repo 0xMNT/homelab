@@ -18,7 +18,7 @@ spec:
           - $values/postgres-standalone/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: pg-cluster
+    namespace: postgres-standalone
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
