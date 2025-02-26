@@ -10,7 +10,7 @@ spec:
       targetRevision: HEAD
       ref: values
     - repoURL: https://argoproj.github.io/argo-helm
-      chart: argocd
+      chart: argo
       targetRevision: 7.8.5
       helm:
         valueFiles:
