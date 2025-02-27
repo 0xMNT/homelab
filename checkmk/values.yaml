@@ -212,6 +212,7 @@ nodeCollector:
       - "--disable_metrics=percpu,process,sched,tcp,udp,diskIO,disk,network"
       - "--allow_dynamic_housekeeping=true"
       - "--storage_duration=1m0s"
+      - "--disable_metrics=referenced_memory"
 
     # For Google Kubernetes Engine (GKE) Autopilot, the readOnly needs to be set to true
     volumeMountPermissions:
