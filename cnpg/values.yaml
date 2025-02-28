@@ -170,7 +170,7 @@ affinity: {}
 monitoring:
 
   # -- Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
-  podMonitorEnabled: false
+  podMonitorEnabled: true
   # -- Metrics relabel configurations to apply to samples before ingestion.
   podMonitorMetricRelabelings: []
   # -- Relabel configurations to apply to samples before scraping.
@@ -179,7 +179,7 @@ monitoring:
   podMonitorAdditionalLabels: {}
 
   grafanaDashboard:
-    create: false
+    create: true
     # -- Allows overriding the namespace where the ConfigMap will be created, defaulting to the same one as the Release.
     namespace: ""
     # -- The name of the ConfigMap containing the dashboard.
