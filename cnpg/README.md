@@ -9,3 +9,9 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
 ``` 
+
+## ServiceMonitor
+```bash
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/refs/heads/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+``` 
+
