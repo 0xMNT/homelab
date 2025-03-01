@@ -8,6 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
+      path: cnpg
       ref: values
     - repoURL: https://cloudnative-pg.github.io/charts
       chart: cloudnative-pg
