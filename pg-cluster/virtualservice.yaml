@@ -7,7 +7,7 @@ spec:
   hosts:
     - "pg-cluster.local"
   gateways:
-    - istio-system/postgres-gateway
+    - cnpg/postgres-gateway
   tcp:
     - match:
         - port: 5432
