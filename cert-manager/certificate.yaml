@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: root-ca-issuer
+  namespace: cert-manager
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: root-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: "Root CA"
+  secretName: root-ca-secret
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: root-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+
