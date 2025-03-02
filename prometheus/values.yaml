@@ -373,7 +373,8 @@ server:
 
     ## Prometheus server Ingress annotations
     ##
-    annotations: {}
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-ca
     #   kubernetes.io/ingress.class: nginx
     #   kubernetes.io/tls-acme: 'true'
 
@@ -406,10 +407,10 @@ server:
     ## Prometheus server Ingress TLS configuration (hosts passed through tpl)
     ## Secrets must be manually created in the namespace
     ##
-    tls: []
-    #   - secretName: prometheus-server-tls
-    #     hosts:
-    #       - prometheus.domain.com
+    tls:
+      - secretName: prometheus-server-tls
+        hosts:
+          - prometheus.local
 
   ## Server Deployment Strategy type
   strategy:
