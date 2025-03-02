@@ -116,19 +116,20 @@ networkPolicy:
 ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: true
-  annotations: {}
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  # ingressClassName: ""
+  ingressClassName: "nginx"
   hosts:
     - host: pgadmin.local
       paths:
         - path: /
           pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls:
+   - secretName: pgadmin-tls
+     hosts:
+       - pgadmin.local
 
 # Additional config maps to be mounted inside a container
 # Can be used to map config maps for sidecar as well
