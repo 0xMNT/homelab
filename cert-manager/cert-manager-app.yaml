@@ -8,6 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
+      path: cert-manager
       ref: values
     - repoURL: https://charts.jetstack.io
       chart: cert-manager
