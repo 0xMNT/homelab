@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kiali
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://kiali.org/helm-charts
+      chart: kiali-server
+      targetRevision: 2.6.0
+      helm:
+        valueFiles:
+          - $values/kiali/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kiali
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: kiali.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
