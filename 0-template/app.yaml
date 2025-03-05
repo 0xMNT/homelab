@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: TEMPLATE
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: ""
+      chart: TEMPLATE
+      targetRevision: ""
+      helm:
+        valueFiles:
+          - $values/TEMPLATE/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: TEMPLATE
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: TEMPLATE.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
