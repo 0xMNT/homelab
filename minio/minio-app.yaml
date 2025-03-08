@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: registry-1.docker.io/bitnamicharts/minio
+      targetRevision: HEAD
+      ref: values
+    - repoURL: ""
+      chart: minio
+      targetRevision: 15.0.6
+      helm:
+        valueFiles:
+          - $values/minio/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: minio.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
