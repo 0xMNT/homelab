@@ -6,10 +6,10 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: registry-1.docker.io/bitnamicharts/minio
+    - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
       ref: values
-    - repoURL: ""
+    - repoURL: registry-1.docker.io/bitnamicharts/minio
       chart: minio
       targetRevision: 15.0.6
       helm:
