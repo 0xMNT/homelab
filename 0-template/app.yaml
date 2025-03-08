@@ -9,9 +9,9 @@ spec:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
       ref: values
-    - repoURL: ""
+    - repoURL: "" # -- add repo 
       chart: TEMPLATE
-      targetRevision: ""
+      targetRevision: "" # -- add version
       helm:
         valueFiles:
           - $values/TEMPLATE/values.yaml
