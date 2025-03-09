@@ -317,7 +317,7 @@ cluster:
 
 backups:
   # -- You need to configure backups manually, so backups are disabled by default.
-  enabled: false
+  enabled: true
 
   # -- Overrides the provider specific default endpoint. Defaults to:
   # S3: https://s3.<region>.amazonaws.com"
@@ -334,15 +334,15 @@ backups:
   # S3: s3://<bucket><path>
   # Azure: https://<storageAccount>.<serviceName>.core.windows.net/<containerName><path>
   # Google: gs://<bucket><path>
-  destinationPath: ""
+  destinationPath: "app1"
   # -- One of `s3`, `azure` or `google`
   provider: s3
   s3:
     region: ""
     bucket: ""
-    path: "/"
-    accessKey: ""
-    secretKey: ""
+    path: "/entw"
+    accessKey: "wt82Fr1RM3wjcegc7pJv"
+    secretKey: "Z33xVYyUr6oNi5ZDqJEZq5HeoBqlKcFQ9tlKwyjH"
     # -- Use the role based authentication without providing explicitly the keys
     inheritFromIAMRole: false
   azure:
@@ -385,7 +385,7 @@ backups:
       # -- Scheduled backup name
       name: daily-backup
       # -- Schedule in cron format
-      schedule: "0 0 0 * * *"
+      schedule: "0 1 20 * * *"
       # -- Backup owner reference
       backupOwnerReference: self
       # -- Backup method, can be `barmanObjectStore` (default) or `volumeSnapshot`
