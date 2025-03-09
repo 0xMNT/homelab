@@ -21,7 +21,7 @@ spec:
   ignoreDifferences:
   - group: ""
     kind: Secret
-    name: minio.local-tls
+    name: minio
     jsonPointers:
     - /data
   syncPolicy:
