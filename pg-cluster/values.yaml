@@ -341,8 +341,8 @@ backups:
     region: "eu-central-1"
     bucket: "test-1"
     path: "backup"
-    accessKey: "wt82Fr1RM3wjcegc7pJv"
-    secretKey: "Z33xVYyUr6oNi5ZDqJEZq5HeoBqlKcFQ9tlKwyjH"
+    accessKey: "KNtMFDHGqsto5WEwGKG6"
+    secretKey: "Nn7tpR6hPk02xAlWW72KBf8XE5KYXDJNfQOQdIJR"
     # -- Use the role based authentication without providing explicitly the keys
     inheritFromIAMRole: false
   azure:
