@@ -340,7 +340,7 @@ backups:
   s3:
     region: "eu-central-1"
     bucket: "test-1"
-    path: "backup"
+    path: "/"
     accessKey: "KNtMFDHGqsto5WEwGKG6"
     secretKey: "Nn7tpR6hPk02xAlWW72KBf8XE5KYXDJNfQOQdIJR"
     # -- Use the role based authentication without providing explicitly the keys
