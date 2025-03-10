@@ -334,13 +334,13 @@ backups:
   # S3: s3://<bucket><path>
   # Azure: https://<storageAccount>.<serviceName>.core.windows.net/<containerName><path>
   # Google: gs://<bucket><path>
-  destinationPath: "app1"
+  destinationPath: ""
   # -- One of `s3`, `azure` or `google`
   provider: s3
   s3:
     region: ""
-    bucket: ""
-    path: "/entw"
+    bucket: "test-1"
+    path: ""
     accessKey: "wt82Fr1RM3wjcegc7pJv"
     secretKey: "Z33xVYyUr6oNi5ZDqJEZq5HeoBqlKcFQ9tlKwyjH"
     # -- Use the role based authentication without providing explicitly the keys
