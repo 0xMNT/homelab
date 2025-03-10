@@ -321,7 +321,7 @@ backups:
 
   # -- Overrides the provider specific default endpoint. Defaults to:
   # S3: https://s3.<region>.amazonaws.com"
-  endpointURL: "https://minio.minio.svc.cluster.local:9000"  # Leave empty if using the default S3 endpoint
+  endpointURL: "http://minio.minio.svc.cluster.local:9000"  # Leave empty if using the default S3 endpoint
   # -- Specifies a CA bundle to validate a privately signed certificate.
   endpointCA:
     # -- Creates a secret with the given value if true, otherwise uses an existing secret.
@@ -338,9 +338,9 @@ backups:
   # -- One of `s3`, `azure` or `google`
   provider: s3
   s3:
-    region: ""
+    region: "eu-central-1"
     bucket: "test-1"
-    path: ""
+    path: "backup"
     accessKey: "wt82Fr1RM3wjcegc7pJv"
     secretKey: "Z33xVYyUr6oNi5ZDqJEZq5HeoBqlKcFQ9tlKwyjH"
     # -- Use the role based authentication without providing explicitly the keys
