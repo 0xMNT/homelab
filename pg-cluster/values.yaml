@@ -338,7 +338,7 @@ backups:
   # -- One of `s3`, `azure` or `google`
   provider: s3
   s3:
-    region: "eu-central-1"
+    region: ""
     bucket: ""
     path: ""
     accessKey: "KNtMFDHGqsto5WEwGKG6"
