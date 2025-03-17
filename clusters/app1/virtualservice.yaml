@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: pg-cluster-virtualservice
+  name: app1-pg-cluster
   namespace: app1-pg-cluster
 spec:
   hosts:
@@ -13,7 +13,7 @@ spec:
         - port: 5432
       route:
         - destination:
-            host: app1-pg-cluster-pooler-rw.pg-cluster.svc.cluster.local # <service>.<namespace>.svc.cluster.local
+            host: app1-pg-cluster-pooler-rw.app1-pg-cluster.svc.cluster.local # <service>.<namespace>.svc.cluster.local
             port:
               number: 5432
 

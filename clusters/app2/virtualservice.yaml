@@ -5,7 +5,7 @@ metadata:
   namespace: app2-pg-cluster
 spec:
   hosts:
-    - "app2.local"
+    - "app2-pg-cluster.local"
   gateways:
     - cnpg/postgres-gateway
   tcp:
@@ -13,7 +13,7 @@ spec:
         - port: 5432
       route:
         - destination:
-            host: app2-pg-cluster-pooler-rw.pg-cluster.svc.cluster.local # <service>.<namespace>.svc.cluster.local
+            host: app2-pg-cluster-pooler-rw.app2-pg-cluster.svc.cluster.local # <service>.<namespace>.svc.cluster.local
             port:
               number: 5432
 
