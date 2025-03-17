@@ -18,7 +18,7 @@ spec:
           - $values/clusters/app1/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: pg-cluster
+    namespace: app1-pg-cluster
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
