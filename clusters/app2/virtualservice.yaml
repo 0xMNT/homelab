@@ -10,9 +10,9 @@ spec:
   - cnpg/postgres-gateway
   tcp:
   - match:
-    - sniHosts:
+    - port: 5432
+      sniHosts:
       - app2-pg-cluster.local
-    port: 5432
     route:
     - destination:
         host: app2-pg-cluster-pooler-rw.app2-pg-cluster.svc.cluster.local # <service>.<namespace>.svc.cluster.local
