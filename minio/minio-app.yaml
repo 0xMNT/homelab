@@ -24,6 +24,16 @@ spec:
     name: minio
     jsonPointers:
     - /data
+  - group: ""
+    kind: Secret
+    name: minio.local-tls
+    jsonPointers:
+    - /data
+  - group: "apps"
+    kind: Deployment
+    name: minio
+    jsonPointers:
+    - /spec/template/metadata/annotations/checksum/credentials-secret
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
