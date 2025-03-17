@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: pg-cluster-virtualservice
-  namespace: pg-cluster
+  namespace: app1-pg-cluster
 spec:
   hosts:
     - "app1-pg-cluster.local"
