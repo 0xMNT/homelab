@@ -7,11 +7,12 @@ spec:
   selector:
     istio: ingressgateway
   servers:
-    - port:
-        number: 5432
-        name: tcp-postgres
-        protocol: TCP
-      tls:
-        mode: PASSTHROUGH
-      hosts:
-        - "*"
+  - hosts:
+    - "*"
+    port:
+      name: tls-postgres
+      number: 5432
+      protocol: TLS
+    tls:
+      mode: PASSTHROUGH
+
