@@ -11,6 +11,7 @@ spec:
         number: 5432
         name: tcp-postgres
         protocol: TCP
+      tls:
+        mode: PASSTHROUGH
       hosts:
         - "*"
-
