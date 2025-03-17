@@ -8,7 +8,7 @@ spec:
   - "app2-pg-cluster.local"
   gateways:
   - cnpg/postgres-gateway
-  tcp:
+  tls:
   - match:
     - port: 5432
       sniHosts:
