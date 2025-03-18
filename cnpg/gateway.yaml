@@ -10,9 +10,7 @@ spec:
   - hosts:
     - "*"
     port:
-      name: tls-postgres
+      name: tcp-postgres
       number: 5432
-      protocol: TLS
-    tls:
-      mode: PASSTHROUGH
+      protocol: TCP
 
