@@ -1,0 +1,11 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: app2-db-access
+  namespace: app2-pg-cluster
+spec:
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        ports: ["5432"]

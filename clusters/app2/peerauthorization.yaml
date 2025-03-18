@@ -1,0 +1,11 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: app2-postgres-peer-policy
+  namespace: app2-pg-cluster
+spec:
+  selector:
+    matchLabels:
+      app: postgres  # match your CloudNativePG labels
+  mtls:
+    mode: PERMISSIVE  # allows both TLS and non-TLS traffic
