@@ -15,7 +15,7 @@ spec:
       - "app1-pg-cluster.local"
     route:
     - destination:
-        host: app1-pg-cluster-rw
+        host: app1-pg-cluster-rw.app1-pg-cluster.svc.cluster.local
         port:
           number: 5432
   - match:
@@ -24,6 +24,6 @@ spec:
       - "app2-pg-cluster.local"
     route:
     - destination:
-        host: app2-pg-cluster-rw
+        host: app2-pg-cluster-rw.app2-pg-cluster.svc.cluster.local
         port:
           number: 5432
