@@ -1,0 +1,25 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: postgres-tcp-route
+  namespace: traefik
+spec:
+  entryPoints:
+    - postgres
+  routes:
+    - match: HostSNI(`app1-pg-cluster.local`)
+      services:
+        - name: app1-pg-cluster-pooler-rw
+          namespace: app1-pg-cluster
+          port: 5432
+    - match: HostSNI(`app2-pg-cluster.local`)
+      services:
+        - name: app2-pg-cluster-pooler-rw
+          namespace: app2-pg-cluster
+          port: 5432
+    # Default route if no match
+    - match: HostSNI(`*`)
+      services:
+        - name: app1-pg-cluster-pooler-rw
+          namespace: app1-pg-cluster
+          port: 5432
