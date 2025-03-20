@@ -8,6 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
+      path: traefik
       ref: values
     - repoURL: https://traefik.github.io/charts
       chart: traefik
