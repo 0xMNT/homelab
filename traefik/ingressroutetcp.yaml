@@ -12,13 +12,12 @@ spec:
         - name: app1-pg-cluster-pooler-rw
           namespace: app1-pg-cluster
           port: 5432
+      tls:
+        passthrough: true
     - match: HostSNI(`app2-pg-cluster.local`)
       services:
         - name: app2-pg-cluster-pooler-rw
           namespace: app2-pg-cluster
           port: 5432
-    - match: HostSNI(`*`)
-      services:
-        - name: app1-pg-cluster-pooler-rw
-          namespace: app1-pg-cluster
-          port: 5432
+      tls:
+        passthrough: true
