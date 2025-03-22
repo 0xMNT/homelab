@@ -5,7 +5,7 @@ metadata:
   namespace: traefik  
 spec:
   entryPoints:
-    - postgres
+    - websecure
   routes:
   - match: HostSNI(`app2-pg-cluster.local`)
     services:
