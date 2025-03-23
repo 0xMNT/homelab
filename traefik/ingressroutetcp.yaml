@@ -9,7 +9,7 @@ spec:
   routes:
   - match: HostSNI(`app1-pg-cluster.local`)
     services:
-    - name: app1-pg-cluster-pooler-rw  
+    - name: app1-pg-cluster-rw  
       namespace: app1-pg-cluster  
       port: 5432
   tls:  
