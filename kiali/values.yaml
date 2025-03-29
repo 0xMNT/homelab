@@ -117,7 +117,7 @@ login_token:
   signing_key: ""
 
 server:
-  port: 20001
+  port: 20002
   #node_port:
   observability:
     metrics:
