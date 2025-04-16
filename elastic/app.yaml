@@ -9,7 +9,7 @@ spec:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
       ref: values
-    - repoURL: "oci://registry-1.docker.io/bitnamicharts"
+    - repoURL: "registry-1.docker.io/bitnamicharts"
       chart: elasticsearch
       targetRevision: "21.6.0"
       helm:
