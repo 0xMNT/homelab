@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elastic
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: "oci://registry-1.docker.io/bitnamicharts"
+      chart: elasticsearch
+      targetRevision: "21.6.0"
+      helm:
+        valueFiles:
+          - $values/elastic/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: elastic
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: elastic.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
