@@ -812,10 +812,11 @@ elasticsearch:
   ##   - elasticsearch-1
   ##   - elasticsearch-2
   ##
-  hosts: []
+  hosts: 
+    - https://elastic.local/
   ## @param elasticsearch.port Elasticsearch port
   ##
-  port: ""
+  port: "9200"
   security:
     auth:
       ## @param elasticsearch.security.auth.enabled Set to 'true' if Elasticsearch has authentication enabled
