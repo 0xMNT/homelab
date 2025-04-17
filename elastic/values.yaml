@@ -889,7 +889,7 @@ master:
 data:
   ## @param data.replicaCount Number of data-only replicas to deploy
   ##
-  replicaCount: 2
+  replicaCount: 1
   ## @param data.extraRoles Append extra roles to the node role
   ##
   extraRoles: []
@@ -943,7 +943,7 @@ data:
   ## Example:
   ##   heapSize: 128m
   ##
-  heapSize: 2048m
+  heapSize: 4096m
   ## Configure Pods Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param data.podSecurityContext.enabled Enabled data pods' Security Context
