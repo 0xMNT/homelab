@@ -813,7 +813,7 @@ elasticsearch:
   ##   - elasticsearch-2
   ##
   hosts: 
-    - https://elastic.local/
+    - elastic-elasticsearch-coordinating-hl.elastic.svc.cluster.local
   ## @param elasticsearch.port Elasticsearch port
   ##
   port: "9200"
