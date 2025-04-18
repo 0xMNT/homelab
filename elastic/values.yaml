@@ -479,7 +479,7 @@ master:
   masterOnly: true
   ## @param master.replicaCount Number of master-elegible replicas to deploy
   ##
-  replicaCount: 2
+  replicaCount: 1
   ## @param master.extraRoles Append extra roles to the node role
   ##
   extraRoles: []
