@@ -1297,7 +1297,7 @@ data:
 coordinating:
   ## @param coordinating.replicaCount Number of coordinating-only replicas to deploy
   ##
-  replicaCount: 2
+  replicaCount: 1
   ## @param coordinating.extraRoles Append extra roles to the node role
   ## NOTE: In Elasticsearch, all nodes act as coordinators, coordinating-only nodes do not have any other role by default.
   ##
@@ -1655,7 +1655,7 @@ ingest:
   enabled: true
   ## @param ingest.replicaCount Number of ingest-only replicas to deploy
   ##
-  replicaCount: 2
+  replicaCount: 1
   ## @param ingest.extraRoles Append extra roles to the node role
   ##
   extraRoles: []
