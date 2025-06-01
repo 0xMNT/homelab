@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kyverno
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: "https://kyverno.github.io/kyverno/" # -- add repo 
+      chart: kyverno
+      targetRevision: "3.4.1" # -- add version
+      helm:
+        valueFiles:
+          - $values/kyverno/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kyverno
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: kyverno.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
