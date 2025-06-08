@@ -1,3 +1,32 @@
+# ClusterRole for Kyverno to manage RoleBindings
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno-generate-rolebindings
+rules:
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["rolebindings"]
+  verbs: ["get", "list", "create", "update", "patch", "delete"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles"]
+  verbs: ["get", "list"]
+
+---
+# ClusterRoleBinding to grant Kyverno permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kyverno-generate-rolebindings
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kyverno-generate-rolebindings
+subjects:
+- kind: ServiceAccount
+  name: kyverno-background-controller
+  namespace: kyverno
+
+---
 # Service Account for DB team access
 apiVersion: v1
 kind: ServiceAccount
@@ -35,6 +64,9 @@ spec:
       - resources:
           kinds:
           - Namespace
+          operations:
+          - CREATE
+          - UPDATE
     preconditions:
       all:
       - key: "{{ request.object.metadata.labels.team || '' }}"
