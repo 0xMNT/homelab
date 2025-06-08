@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# -- alias ns='k get namespace -l team=db --no-headers | awk '\''{print $1}'\'' | kubens'
+
 # Script to generate kubeconfig for db-team service account
 # Run this after applying the YAML configuration
 
