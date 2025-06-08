@@ -147,16 +147,18 @@ spec:
           - Namespace
           operations:
           - DELETE
-        subjects:
+      - subjects:
         - kind: ServiceAccount
           name: db-team-sa
           namespace: kube-system
     validate:
       message: "Access denied: db-team-sa can only delete namespaces with team=db label"
-      pattern:
-        metadata:
-          labels:
-            team: "db"
+      deny:
+        conditions:
+          any:
+          - key: "{{ request.object.metadata.labels.team || 'missing' }}"
+            operator: NotEquals
+            value: "db"
 
 ---
 # Kyverno policy to prevent db-team-sa from modifying namespace labels
