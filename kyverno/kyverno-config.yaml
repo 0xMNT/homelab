@@ -100,7 +100,7 @@ metadata:
 type: kubernetes.io/service-account-token
 
 ---
-# ClusterRole for namespace management - minimal permissions
+# ClusterRole for namespace management - includes delete but restricted by Kyverno policy
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -108,7 +108,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["namespaces"]
-  verbs: ["get", "list", "watch", "delete"]
+  verbs: ["get", "list", "watch", "delete"]  # Delete allowed but restricted by Kyverno policy
 
 ---
 # ClusterRoleBinding to grant namespace management permissions
@@ -126,7 +126,7 @@ subjects:
   namespace: kube-system
 
 ---
-# Kyverno policy to restrict namespace deletion to only team=db namespaces
+# Kyverno policy to block deletion of namespaces without team=db label
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -134,12 +134,12 @@ metadata:
   annotations:
     policies.kyverno.io/title: "Restrict DB Team Namespace Deletion"
     policies.kyverno.io/category: "Security"
-    policies.kyverno.io/description: "Only allow deletion of namespaces with team=db label by db-team-sa"
+    policies.kyverno.io/description: "Block deletion of namespaces without team=db label by db-team-sa"
 spec:
   validationFailureAction: enforce
   background: false
   rules:
-  - name: restrict-namespace-deletion
+  - name: block-non-db-namespace-deletion
     match:
       any:
       - resources:
@@ -152,7 +152,7 @@ spec:
           name: db-team-sa
           namespace: kube-system
     validate:
-      message: "db-team-sa can only delete namespaces with team=db label"
+      message: "Access denied: db-team-sa can only delete namespaces with team=db label"
       pattern:
         metadata:
           labels:
