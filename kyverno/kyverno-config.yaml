@@ -1,60 +1,15 @@
-# ClusterRole for Kyverno to manage RoleBindings with comprehensive permissions
+# Simplified ClusterRole for Kyverno - full permissions with wildcards
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: kyverno-generate-rolebindings
 rules:
-# Core API group
-- apiGroups: [""]
-  resources: ["*"]
-  verbs: ["*"]
-# RBAC permissions - needed to create RoleBindings
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Apps
-- apiGroups: ["apps"]
-  resources: ["*"]
-  verbs: ["*"]
-# Extensions
-- apiGroups: ["extensions"]
-  resources: ["*"]
-  verbs: ["*"]
-# Networking
-- apiGroups: ["networking.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Storage
-- apiGroups: ["storage.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Batch
-- apiGroups: ["batch"]
-  resources: ["*"]
-  verbs: ["*"]
-# Autoscaling
-- apiGroups: ["autoscaling"]
-  resources: ["*"]
-  verbs: ["*"]
-# Policy
-- apiGroups: ["policy"]
-  resources: ["*"]
-  verbs: ["*"]
-# Metrics
-- apiGroups: ["metrics.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Custom resources
-- apiGroups: ["apiextensions.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Catch-all for any other API groups
 - apiGroups: ["*"]
   resources: ["*"]
   verbs: ["*"]
 
 ---
-# ClusterRoleBinding to grant Kyverno permissions
+# ClusterRoleBinding to grant Kyverno full permissions
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -78,57 +33,12 @@ metadata:
 automountServiceAccountToken: false
 
 ---
-# ClusterRole with explicit full permissions within a namespace
+# Simplified ClusterRole for DB team - full permissions with wildcards
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: db-team-full-access
 rules:
-# Core API group
-- apiGroups: [""]
-  resources: ["*"]
-  verbs: ["*"]
-# RBAC - explicitly grant access to view and manage RBAC resources
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Apps
-- apiGroups: ["apps"]
-  resources: ["*"]
-  verbs: ["*"]
-# Extensions
-- apiGroups: ["extensions"]
-  resources: ["*"]
-  verbs: ["*"]
-# Networking
-- apiGroups: ["networking.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Storage
-- apiGroups: ["storage.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Batch
-- apiGroups: ["batch"]
-  resources: ["*"]
-  verbs: ["*"]
-# Autoscaling
-- apiGroups: ["autoscaling"]
-  resources: ["*"]
-  verbs: ["*"]
-# Policy
-- apiGroups: ["policy"]
-  resources: ["*"]
-  verbs: ["*"]
-# Metrics
-- apiGroups: ["metrics.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Custom resources (add more as needed)
-- apiGroups: ["apiextensions.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
-# Catch-all for any other API groups
 - apiGroups: ["*"]
   resources: ["*"]
   verbs: ["*"]
@@ -190,7 +100,7 @@ metadata:
 type: kubernetes.io/service-account-token
 
 ---
-# ClusterRole to allow db-team-sa to manage only existing team=db namespaces
+# ClusterRole for namespace management - minimal permissions
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -198,11 +108,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["namespaces"]
-  verbs: ["get", "list", "watch"]  # Read-only access to discover namespaces
-- apiGroups: [""]
-  resources: ["namespaces"]
-  verbs: ["delete"]
-  resourceNames: []  # Cannot restrict by resourceNames, needs admission control
+  verbs: ["get", "list", "watch", "delete"]
 
 ---
 # ClusterRoleBinding to grant namespace management permissions
@@ -228,12 +134,12 @@ metadata:
   annotations:
     policies.kyverno.io/title: "Restrict DB Team Namespace Deletion"
     policies.kyverno.io/category: "Security"
-    policies.kyverno.io/description: "Only allow db-team-sa to delete namespaces with team=db label"
+    policies.kyverno.io/description: "Only allow deletion of namespaces with team=db label by db-team-sa"
 spec:
   validationFailureAction: enforce
   background: false
   rules:
-  - name: allow-db-team-namespace-deletion
+  - name: restrict-namespace-deletion
     match:
       any:
       - resources:
@@ -241,20 +147,66 @@ spec:
           - Namespace
           operations:
           - DELETE
-    exclude:
-      any:
-      - subjects:
+        subjects:
         - kind: ServiceAccount
           name: db-team-sa
           namespace: kube-system
     validate:
-      message: "Only db-team service account can delete namespaces with team=db label"
+      message: "db-team-sa can only delete namespaces with team=db label"
+      pattern:
+        metadata:
+          labels:
+            team: "db"
+
+---
+# Kyverno policy to prevent db-team-sa from modifying namespace labels
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: prevent-db-team-label-modification
+  annotations:
+    policies.kyverno.io/title: "Prevent DB Team Label Modification"
+    policies.kyverno.io/category: "Security"
+    policies.kyverno.io/description: "Prevent db-team-sa from creating namespaces or modifying team labels"
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: prevent-namespace-creation
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - CREATE
+        subjects:
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
+    validate:
+      message: "db-team-sa is not allowed to create namespaces"
+      deny: {}
+  - name: prevent-team-label-modification
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - UPDATE
+        subjects:
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
+    validate:
+      message: "db-team-sa cannot modify team labels on namespaces"
       deny:
         conditions:
           any:
           - key: "{{ request.object.metadata.labels.team || '' }}"
-            operator: Equals
-            value: "db"
+            operator: NotEquals
+            value: "{{ request.oldObject.metadata.labels.team || '' }}"
 
 ---
 # Example namespace with the required label
