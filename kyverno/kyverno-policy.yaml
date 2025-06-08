@@ -1,0 +1,96 @@
+# First, create a ClusterRole with full permissions within a namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: db-team-full-access
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+# Kyverno policy to automatically create RoleBinding in namespaces with team=db label
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: db-team-rolebinding
+  annotations:
+    policies.kyverno.io/title: "Auto-create RoleBinding for DB Team"
+    policies.kyverno.io/category: "RBAC"
+    policies.kyverno.io/description: "Automatically creates a RoleBinding granting full access to users/groups when namespace has team=db label"
+spec:
+  rules:
+  - name: create-db-team-rolebinding
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+        clusterRoles:
+        - "cluster-admin"
+    preconditions:
+      all:
+      - key: "{{ request.object.metadata.labels.team || '' }}"
+        operator: Equals
+        value: "db"
+    generate:
+      synchronize: true
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      name: db-team-full-access
+      namespace: "{{ request.object.metadata.name }}"
+      data:
+        metadata:
+          name: db-team-full-access
+          namespace: "{{ request.object.metadata.name }}"
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: db-team-full-access
+        subjects:
+        # Replace these with your actual users/groups/service accounts
+        - kind: User
+          name: db-user
+          apiGroup: rbac.authorization.k8s.io
+        - kind: Group
+          name: db-team
+          apiGroup: rbac.authorization.k8s.io
+        # Example service account (uncomment and modify as needed)
+        # - kind: ServiceAccount
+        #   name: db-service-account
+        #   namespace: kube-system
+
+---
+# Example of how to create a namespace with the required label
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database-production
+  labels:
+    team: db
+
+---
+# Example kubeconfig entry (you'll need to replace the certificate data, server, etc.)
+# This shows the structure - you'll generate the actual kubeconfig separately
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority-data: <BASE64_ENCODED_CA_CERT>
+    server: https://your-k8s-api-server:6443
+  name: your-cluster
+contexts:
+- context:
+    cluster: your-cluster
+    namespace: database-production  # Default namespace
+    user: db-user
+  name: db-team-context
+current-context: db-team-context
+users:
+- name: db-user
+  user:
+    # For certificate-based auth
+    client-certificate-data: <BASE64_ENCODED_CLIENT_CERT>
+    client-key-data: <BASE64_ENCODED_CLIENT_KEY>
+    # Or for token-based auth
+    # token: <YOUR_TOKEN>
