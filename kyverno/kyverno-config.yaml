@@ -12,14 +12,15 @@ rules:
   verbs: ["get", "list"]
 
 ---
+# ClusterRoleBinding to grant Kyverno permissions
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kyverno-generate-cluster-admin
+  name: kyverno-generate-rolebindings
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-admin
+  name: kyverno-generate-rolebindings
 subjects:
 - kind: ServiceAccount
   name: kyverno-background-controller
@@ -102,6 +103,70 @@ metadata:
 type: kubernetes.io/service-account-token
 
 ---
+# ClusterRole to allow db-team-sa to manage team=db namespaces
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: db-team-namespace-manager
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "create", "delete", "patch", "update"]
+  resourceNames: []  # Will be restricted by admission controllers
+
+---
+# ClusterRoleBinding to grant namespace management permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: db-team-namespace-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: db-team-namespace-manager
+subjects:
+- kind: ServiceAccount
+  name: db-team-sa
+  namespace: kube-system
+
+---
+# Kyverno policy to restrict namespace deletion to only team=db namespaces
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-db-team-namespace-deletion
+  annotations:
+    policies.kyverno.io/title: "Restrict DB Team Namespace Deletion"
+    policies.kyverno.io/category: "Security"
+    policies.kyverno.io/description: "Only allow db-team-sa to delete namespaces with team=db label"
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: allow-db-team-namespace-deletion
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - DELETE
+    exclude:
+      any:
+      - subjects:
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
+    validate:
+      message: "Only db-team service account can delete namespaces with team=db label"
+      deny:
+        conditions:
+          any:
+          - key: "{{ request.object.metadata.labels.team || '' }}"
+            operator: Equals
+            value: "db"
+
+---
 # Example namespace with the required label
 apiVersion: v1
 kind: Namespace
@@ -109,27 +174,3 @@ metadata:
   name: database-production
   labels:
     team: db
-
-# Option 1: Grant minimal cluster permissions to list namespaces only
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: db-team-namespace-reader
-rules:
-- apiGroups: [""]
-  resources: ["namespaces"]
-  verbs: ["get", "list"]
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: db-team-namespace-reader
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: db-team-namespace-reader
-subjects:
-- kind: ServiceAccount
-  name: db-team-sa
-  namespace: kube-system
