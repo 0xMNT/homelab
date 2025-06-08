@@ -109,3 +109,27 @@ metadata:
   name: database-production
   labels:
     team: db
+
+# Option 1: Grant minimal cluster permissions to list namespaces only
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: db-team-namespace-reader
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: db-team-namespace-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: db-team-namespace-reader
+subjects:
+- kind: ServiceAccount
+  name: db-team-sa
+  namespace: kube-system

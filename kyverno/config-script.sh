@@ -15,10 +15,6 @@ KUBECONFIG_FILE="db-team-kubeconfig.yaml"
 
 echo "🚀 Generating kubeconfig for db-team service account..."
 
-# Wait for secret to be created
-echo "⏳ Waiting for service account token to be available..."
-kubectl wait --for=condition=Ready secret/$SECRET_NAME -n $NAMESPACE --timeout=60s
-
 # Get the token and certificate
 TOKEN=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath='{.data.token}' | base64 -d)
 CA_CERT=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath='{.data.ca\.crt}')
