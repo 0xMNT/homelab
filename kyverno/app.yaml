@@ -29,8 +29,14 @@ spec:
       - /data
   - group: kyverno.io
     kind: ClusterPolicy
-    jsonPointers:
-      - /status
+    jqPathExpressions:
+      - .status
+      - .metadata.annotations
+      - .metadata.managedFields
+      - .spec.rules[].match.resources.selector
+      - .spec.rules[].match.resources
+      - .spec.rules[].match
+      - .spec.rules[]
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
