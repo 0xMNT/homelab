@@ -1,4 +1,4 @@
-# Simplified ClusterRole for Kyverno - full permissions with wildcards
+# Admin permission for Kyverno
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -9,7 +9,7 @@ rules:
   verbs: ["*"]
 
 ---
-# ClusterRoleBinding to grant Kyverno full permissions
+# Give Kyverno permission to create rolebindings 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -30,10 +30,10 @@ kind: ServiceAccount
 metadata:
   name: db-team-sa
   namespace: kube-system
-automountServiceAccountToken: false
+automountServiceAccountToken: false # Security best practice, prevent automount token
 
 ---
-# Simplified ClusterRole for DB team - full permissions with wildcards
+# Admin permission for db-team but only when bound to namespace 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -44,7 +44,7 @@ rules:
   verbs: ["*"]
 
 ---
-# Kyverno policy to automatically create RoleBinding in namespaces with team=db label
+# Kyverno policy to automatically create RoleBinding in namespaces with team=db label and give Admin permissions
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -89,7 +89,7 @@ spec:
           namespace: kube-system
 
 ---
-# Secret to create a long-lived token for the service account (Kubernetes 1.24+)
+# Secret to create a long-lived token for the service account
 apiVersion: v1
 kind: Secret
 metadata:
@@ -100,7 +100,7 @@ metadata:
 type: kubernetes.io/service-account-token
 
 ---
-# ClusterRole for namespace management - includes delete but restricted by Kyverno policy
+# Allows DB team to discover and manage namespaces
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
