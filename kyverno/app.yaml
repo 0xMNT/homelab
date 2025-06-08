@@ -26,7 +26,11 @@ spec:
     kind: Secret
     name: kyverno.local-tls
     jsonPointers:
-    - /data
+      - /data
+  - group: kyverno.io
+    kind: ClusterPolicy
+    jsonPointers:
+      - /status
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
