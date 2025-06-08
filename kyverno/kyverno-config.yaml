@@ -36,12 +36,57 @@ metadata:
 automountServiceAccountToken: false
 
 ---
-# ClusterRole with full permissions within a namespace
+# ClusterRole with explicit full permissions within a namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: db-team-full-access
 rules:
+# Core API group
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+# RBAC - explicitly grant access to view and manage RBAC resources
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+# Apps
+- apiGroups: ["apps"]
+  resources: ["*"]
+  verbs: ["*"]
+# Extensions
+- apiGroups: ["extensions"]
+  resources: ["*"]
+  verbs: ["*"]
+# Networking
+- apiGroups: ["networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+# Storage
+- apiGroups: ["storage.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+# Batch
+- apiGroups: ["batch"]
+  resources: ["*"]
+  verbs: ["*"]
+# Autoscaling
+- apiGroups: ["autoscaling"]
+  resources: ["*"]
+  verbs: ["*"]
+# Policy
+- apiGroups: ["policy"]
+  resources: ["*"]
+  verbs: ["*"]
+# Metrics
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+# Custom resources (add more as needed)
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+# Catch-all for any other API groups
 - apiGroups: ["*"]
   resources: ["*"]
   verbs: ["*"]
@@ -103,7 +148,7 @@ metadata:
 type: kubernetes.io/service-account-token
 
 ---
-# ClusterRole to allow db-team-sa to manage team=db namespaces
+# ClusterRole to allow db-team-sa to manage only existing team=db namespaces
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -111,8 +156,11 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["namespaces"]
-  verbs: ["get", "list", "create", "delete", "patch", "update", "watch"]
-  resourceNames: []  # Will be restricted by admission controllers
+  verbs: ["get", "list", "watch"]  # Read-only access to discover namespaces
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["delete"]
+  resourceNames: []  # Cannot restrict by resourceNames, needs admission control
 
 ---
 # ClusterRoleBinding to grant namespace management permissions
