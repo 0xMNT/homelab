@@ -111,7 +111,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["namespaces"]
-  verbs: ["get", "list", "create", "delete", "patch", "update"]
+  verbs: ["get", "list", "create", "delete", "patch", "update", "watch"]
   resourceNames: []  # Will be restricted by admission controllers
 
 ---
