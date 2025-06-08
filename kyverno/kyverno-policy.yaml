@@ -1,4 +1,13 @@
-# First, create a ClusterRole with full permissions within a namespace
+# Service Account for DB team access
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: db-team-sa
+  namespace: kube-system
+automountServiceAccountToken: false
+
+---
+# ClusterRole with full permissions within a namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -17,7 +26,7 @@ metadata:
   annotations:
     policies.kyverno.io/title: "Auto-create RoleBinding for DB Team"
     policies.kyverno.io/category: "RBAC"
-    policies.kyverno.io/description: "Automatically creates a RoleBinding granting full access to users/groups when namespace has team=db label"
+    policies.kyverno.io/description: "Automatically creates a RoleBinding granting full access to db-team service account when namespace has team=db label"
 spec:
   rules:
   - name: create-db-team-rolebinding
@@ -26,8 +35,6 @@ spec:
       - resources:
           kinds:
           - Namespace
-        clusterRoles:
-        - "cluster-admin"
     preconditions:
       all:
       - key: "{{ request.object.metadata.labels.team || '' }}"
@@ -48,49 +55,26 @@ spec:
           kind: ClusterRole
           name: db-team-full-access
         subjects:
-        # Replace these with your actual users/groups/service accounts
-        - kind: User
-          name: db-user
-          apiGroup: rbac.authorization.k8s.io
-        - kind: Group
-          name: db-team
-          apiGroup: rbac.authorization.k8s.io
-        # Example service account (uncomment and modify as needed)
-        # - kind: ServiceAccount
-        #   name: db-service-account
-        #   namespace: kube-system
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
 
 ---
-# Example of how to create a namespace with the required label
+# Secret to create a long-lived token for the service account (Kubernetes 1.24+)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-team-sa-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: db-team-sa
+type: kubernetes.io/service-account-token
+
+---
+# Example namespace with the required label
 apiVersion: v1
 kind: Namespace
 metadata:
   name: database-production
   labels:
     team: db
-
----
-# Example kubeconfig entry (you'll need to replace the certificate data, server, etc.)
-# This shows the structure - you'll generate the actual kubeconfig separately
-apiVersion: v1
-kind: Config
-clusters:
-- cluster:
-    certificate-authority-data: <BASE64_ENCODED_CA_CERT>
-    server: https://your-k8s-api-server:6443
-  name: your-cluster
-contexts:
-- context:
-    cluster: your-cluster
-    namespace: database-production  # Default namespace
-    user: db-user
-  name: db-team-context
-current-context: db-team-context
-users:
-- name: db-user
-  user:
-    # For certificate-based auth
-    client-certificate-data: <BASE64_ENCODED_CLIENT_CERT>
-    client-key-data: <BASE64_ENCODED_CLIENT_KEY>
-    # Or for token-based auth
-    # token: <YOUR_TOKEN>
