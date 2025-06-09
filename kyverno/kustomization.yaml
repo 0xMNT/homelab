@@ -8,7 +8,6 @@ resources:
 - 01-kyverno-rbac.yaml
 - 02-db-team-rbac.yaml  
 - 03-automation-policies.yaml
-- 04-examples.yaml
 
 # Ensures resources are applied in order
 generatorOptions:
