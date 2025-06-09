@@ -6,7 +6,7 @@ metadata:
   namespace: kube-system
   annotations:
     description: "Service account for DB team access to team=db namespaces"
-automountServiceAccountToken: false
+automountServiceAccountToken: false # Security best practice, prevent automount token
 
 ---
 apiVersion: v1
