@@ -1,0 +1,125 @@
+# Kyverno policies for automation and security
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: db-team-rolebinding
+  annotations:
+    policies.kyverno.io/title: "Auto-create RoleBinding for DB Team"
+    policies.kyverno.io/category: "RBAC"
+    policies.kyverno.io/description: "Automatically creates RoleBinding when namespace gets team=db label"
+spec:
+  rules:
+  - name: create-db-team-rolebinding
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - CREATE
+          - UPDATE
+    preconditions:
+      all:
+      - key: "{{ request.object.metadata.labels.team || '' }}"
+        operator: Equals
+        value: "db"
+    generate:
+      synchronize: true
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      name: db-team-full-access
+      namespace: "{{ request.object.metadata.name }}"
+      data:
+        metadata:
+          name: db-team-full-access
+          namespace: "{{ request.object.metadata.name }}"
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: db-team-full-access
+        subjects:
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
+
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-db-team-namespace-deletion
+  annotations:
+    policies.kyverno.io/title: "Restrict DB Team Namespace Deletion"
+    policies.kyverno.io/category: "Security"
+    policies.kyverno.io/description: "Only allow deletion of namespaces with team=db label"
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: block-non-db-namespace-deletion
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - DELETE
+    validate:
+      message: "Access denied: db-team-sa can only delete namespaces with team=db label"
+      deny:
+        conditions:
+          all:
+          - key: "{{ request.userInfo.username }}"
+            operator: Equals
+            value: "system:serviceaccount:kube-system:db-team-sa"
+          - key: "{{ request.object.metadata.labels.team || 'missing' }}"
+            operator: NotEquals
+            value: "db"
+
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: prevent-db-team-label-modification
+  annotations:
+    policies.kyverno.io/title: "Prevent DB Team Label Modification"
+    policies.kyverno.io/category: "Security"
+    policies.kyverno.io/description: "Prevent db-team-sa from creating/modifying namespaces"
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: prevent-namespace-creation
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - CREATE
+        subjects:
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
+    validate:
+      message: "db-team-sa is not allowed to create namespaces"
+      deny: {}
+  - name: prevent-team-label-modification
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+          operations:
+          - UPDATE
+        subjects:
+        - kind: ServiceAccount
+          name: db-team-sa
+          namespace: kube-system
+    validate:
+      message: "db-team-sa cannot modify team labels on namespaces"
+      deny:
+        conditions:
+          any:
+          - key: "{{ request.object.metadata.labels.team || '' }}"
+            operator: NotEquals
+            value: "{{ request.oldObject.metadata.labels.team || '' }}"

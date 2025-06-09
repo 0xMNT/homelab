@@ -1,0 +1,61 @@
+# Create the DB team identity and define their permissions
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: db-team-sa
+  namespace: kube-system
+  annotations:
+    description: "Service account for DB team access to team=db namespaces"
+automountServiceAccountToken: false
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-team-sa-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: db-team-sa
+    description: "Long-lived token for db-team-sa authentication"
+type: kubernetes.io/service-account-token
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: db-team-full-access
+  annotations:
+    description: "Full permissions template for DB team within their namespaces"
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: db-team-namespace-manager
+  annotations:
+    description: "Allows DB team to discover and manage namespaces (restricted by policies)"
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: db-team-namespace-manager
+  annotations:
+    description: "Grants namespace management permissions to DB team"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: db-team-namespace-manager
+subjects:
+- kind: ServiceAccount
+  name: db-team-sa
+  namespace: kube-system
+
