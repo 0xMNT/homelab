@@ -9,9 +9,9 @@ spec:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/0xMNT/homelab
-      targetRevision: HEAD
-      path: kyverno
+    # - repoURL: https://github.com/0xMNT/homelab
+    #   targetRevision: HEAD
+    #   path: kyverno/config
     - repoURL: "https://kyverno.github.io/kyverno/" # -- add repo 
       chart: kyverno
       targetRevision: "3.4.1" # -- add version
