@@ -28,7 +28,7 @@ expose:
       secretName: ""
   ingress:
     hosts:
-      core: harbor.local
+      core: harbor
     # set to the type of ingress controller if it has specific requirements.
     # leave as `default` for most ingress controllers.
     # set to `gce` if using the GCE ingress controller
@@ -50,7 +50,7 @@ expose:
     labels: {}
   clusterIP:
     # The name of ClusterIP service
-    name: harbor.local
+    name: harbor
     # The ip address of the ClusterIP service (leave empty for acquiring dynamic ip)
     staticClusterIP: ""
     ports:
