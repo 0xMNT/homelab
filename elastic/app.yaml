@@ -11,7 +11,7 @@ spec:
       ref: values
     - repoURL: "registry-1.docker.io/bitnamicharts"
       chart: elasticsearch
-      targetRevision: "21.6.0"
+      targetRevision: 22.0.14
       helm:
         valueFiles:
           - $values/elastic/values.yaml
