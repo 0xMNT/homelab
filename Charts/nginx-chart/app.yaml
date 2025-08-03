@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/0xMNT/homelab
+      chart: nginx
+      targetRevision: "HEAD"
+      helm:
+        valueFiles:
+          - $values/Charts/nginx-chart/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: nginx.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
