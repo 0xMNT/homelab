@@ -9,8 +9,8 @@ spec:
     - repoURL: https://github.com/0xMNT/homelab
       targetRevision: HEAD
       ref: values
-    - repoURL: "https://dirsigler.github.io/uptime-kuma-helm"
-      chart: uptime
+    - repoURL: "https://helm.irsigler.cloud"
+      chart: uptime-kuma
       targetRevision: "2.22.0"
       helm:
         valueFiles:
