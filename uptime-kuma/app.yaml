@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: uptime
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/0xMNT/homelab
+      targetRevision: HEAD
+      ref: values
+    - repoURL: "https://dirsigler.github.io/uptime-kuma-helm"
+      chart: uptime
+      targetRevision: "2.22.0"
+      helm:
+        valueFiles:
+          - $values/uptime/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: uptime
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: uptime.local-tls
+    jsonPointers:
+    - /data
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
