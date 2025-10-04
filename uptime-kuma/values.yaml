@@ -78,7 +78,7 @@ ingress:
         proxy_cache_bypass $http_upgrade;
       }
   hosts:
-    - host: chart-example.local
+    - host: uptime.local
       paths:
         - path: /
           pathType: ImplementationSpecific
