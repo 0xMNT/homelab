@@ -10,7 +10,7 @@ spec:
       targetRevision: HEAD
       ref: values
     - repoURL: https://github.com/0xMNT/homelab
-      chart: nginx
+      chart: nginx-chart
       targetRevision: "HEAD"
       helm:
         valueFiles:
